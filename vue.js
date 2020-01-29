@@ -28,16 +28,20 @@ const compileHandle = {
         new Watcher(vm,expr,(newVal=>{
             this.updater.modelUpdate(node,newVal)
         }))
-        node.addEventListener("input",e=>{
-            this.setVal(expr,vm,e.target.value)
+        node.addEventListener("input",e=>{ // 监听表单元素
+            this.setVal(expr,vm,e.target.value) // 设置新值
         })
         this.updater.modelUpdate(node,val)
     },
     if(node,expr,vm){
-
+        
     },
     show(node,expr,vm){
-
+        const val = this.getVal(expr,vm);
+        new Watcher(vm,expr,(newVal=>{
+            this.updater.showUpdate(node,newVal)
+        }))
+        this.updater.showUpdate(node,val);
     },
     for(node,expr,vm){
 
@@ -66,6 +70,14 @@ const compileHandle = {
         },
         modelUpdate(node,value){
             node.value = value
+        },
+        showUpdate(node,value){
+            if(value){
+                node.style.display="block"
+            }else{
+                
+                node.style.display="none"
+            }
         }
     },
     getVal(expr,vm){
@@ -91,6 +103,7 @@ class Watcher{
         const newVal = compileHandle.getVal(this.expr,this.vm);
         if(newVal!==this.oldVal){ // 如果新值与旧值不同
             this.cb(newVal) // 调用回调函数
+            this.oldVal = newVal // 替换旧值
         }
     }
     getOldVal(){
@@ -155,7 +168,7 @@ class Compile{
                 const [,instructions] = name.split("-"); // 将指令如text，bind:type，on:click赋值给instructions
                 const [type,bindType] = instructions.split(":"); // 将text，on，bind之类的值给type，bind，on绑定的值给bindType
                 compileHandle[type](node,value,this.vm,bindType);
-                node.removeAttribute(name);
+                node.removeAttribute(name); // 删除v-指令
             }
         })
     }

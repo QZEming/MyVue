@@ -23,6 +23,7 @@
         <p v-text="person.name"></p>
         <button v-on:click="test">v-on test</button>
         <button @click="test">@ test</button>
+        <p v-show="judge">show</p>
     </div>
 
     <script src="./vue.js"></script>
@@ -34,7 +35,8 @@
                     name: 'zem',
                     age: 18
                 },
-                msg: 'text'
+                msg: 'text',
+                judge: true
             },
             methods: {
                 test() {
